@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | AI Skill-to-Career Mentor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        .user-greeting h1 { font-size: 2rem; margin-bottom: 0.2rem; }
+        .nav-actions { display: flex; gap: 1rem; align-items: center; }
+        
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        .panel { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+        .panel h2 { font-size: 1.3rem; margin-bottom: 1.5rem; border-bottom: none; display: flex; align-items: center; gap: 0.5rem; }
+        
+        .history-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+        .history-item { padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px; border-left: 4px solid var(--accent); transition: 0.3s; }
+        .history-item:hover { transform: translateX(5px); background: rgba(255,255,255,0.05); }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .history-role { font-weight: 600; font-size: 1.1rem; color: #fff; }
+        .history-score { background: rgba(46, 160, 67, 0.2); color: var(--success); padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 600; font-size: 0.85rem; }
+        .history-date { font-size: 0.8rem; color: var(--text-secondary); }
+        
+        .trend-list { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+        .trend-item { display: flex; justify-content: space-between; padding: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .trend-item:last-child { border-bottom: none; }
+        .trend-name { font-weight: 600; }
+        .trend-badge { background: rgba(210, 153, 34, 0.2); color: var(--warning); font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 8px; }
+
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .dashboard-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
+            .nav-actions { width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="container glass-panel" style="max-width: 1200px;">
+        <header class="dashboard-header">
+            <div class="user-greeting">
+                <h1>Welcome back, <span class="highlight">{{ name }}</span>!</h1>
+                <p class="subtitle">Your career guidance control center.</p>
+            </div>
+            <div class="nav-actions">
+                <a href="/assessment" class="btn"><i class="fas fa-plus"></i> New Assessment</a>
+                <a href="/logout" class="btn-secondary" style="text-decoration: none;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <div class="main-column">
+                <section class="panel">
+                    <h2><i class="fas fa-history" style="color: var(--accent);"></i> Your Evaluation History</h2>
+                    {% if evaluations %}
+                        <ul class="history-list">
+                            {% for eval in evaluations %}
+                            <li class="history-item">
+                                <div class="history-header">
+                                    <span class="history-role">{{ eval.role_name }}</span>
+                                    <span class="history-score">Readiness: {{ eval.readiness_score }}%</span>
+                                </div>
+                                <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">{{ eval.feedback }}</p>
+                                <span class="history-date"><i class="far fa-clock"></i> Evaluated on: {{ eval.created_at[:10] }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div style="text-align: center; padding: 2rem 0; color: var(--text-secondary);">
+                            <i class="fas fa-clipboard-list" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>You haven't taken any assessments yet.</p>
+                            <a href="/assessment" style="color: var(--accent); text-decoration: none;">Start your first evaluation -></a>
+                        </div>
+                    {% endif %}
+                </section>
+            </div>
+
+            <div class="side-column">
+                <section class="panel">
+                    <h2><i class="fas fa-fire" style="color: var(--danger);"></i> Trending Roles in 2026</h2>
+                    <ul class="trend-list">
+                        <li class="trend-item">
+                            <span class="trend-name">AI Engineer</span>
+                            <span class="trend-badge">High Demand</span>
+                        </li>
+                        <li class="trend-item">
+                            <span class="trend-name">Machine Learning Eng.</span>
+                            <span class="trend-badge">High Demand</span>
+                        </li>
+                        <li class="trend-item">
+                            <span class="trend-name">Cloud Architect</span>
+                            <span class="trend-badge">Growing</span>
+                        </li>
+                        <li class="trend-item">
+                            <span class="trend-name">Cybersecurity Analyst</span>
+                            <span class="trend-badge">Stable</span>
+                        </li>
+                        <li class="trend-item">
+                            <span class="trend-name">Data Scientist</span>
+                            <span class="trend-badge">High Demand</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="panel">
+                    <h2><i class="fas fa-star" style="color: var(--warning);"></i> Top AI Skills to Learn</h2>
+                    <ul class="trend-list">
+                        <li class="trend-item">
+                            <span class="trend-name">PyTorch & TensorFlow</span>
+                        </li>
+                        <li class="trend-item">
+                            <span class="trend-name">Generative AI / LLMs</span>
+                        </li>
+                        <li class="trend-item">
+                            <span class="trend-name">Python for Data Analysis</span>
+                        </li>
+                        <li class="trend-item">
+                            <span class="trend-name">Vector Databases</span>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

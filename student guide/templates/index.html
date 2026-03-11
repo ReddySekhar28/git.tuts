@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover your tech path and map out your journey with our personalized AI Skill-to-Career Guidance Platform.">
+    <title>AI Skill-to-Career Guidance | Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .auth-container { display: flex; flex-direction: column; gap: 2rem; }
+        .tab-buttons { display: flex; justify-content: center; gap: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; }
+        .tab-btn { background: transparent; border: none; color: var(--text-secondary); font-size: 1.2rem; font-weight: 600; cursor: pointer; transition: 0.3s; padding: 0.5rem 1rem; }
+        .tab-btn.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+        .hidden { display: none; }
+        .auth-form { display: flex; flex-direction: column; gap: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; text-align: left; }
+        .form-group label { color: var(--text-secondary); font-size: 0.9rem; font-weight: 600; }
+        .form-group input { width: 100%; }
+        .error-msg { color: var(--danger); font-size: 0.9rem; margin-top: -1rem; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="container glass-panel" style="max-width: 500px;">
+        <header>
+            <h1>AI<span class="highlight">Career</span>Mentor</h1>
+            <p class="subtitle">Navigate your tech career with intelligent guidance.</p>
+        </header>
+
+        <main class="auth-container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" id="tab-login">Login</button>
+                <button class="tab-btn" id="tab-register">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" class="glass-input" required placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="glass-input" required placeholder="••••••••">
+                </div>
+                <div class="error-msg" id="login-error"></div>
+                <button type="submit" class="btn" style="justify-content: center;">Sign In <i class="fas fa-sign-in-alt"></i></button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form hidden">
+                <div class="form-group">
+                    <label for="reg-name">Full Name</label>
+                    <input type="text" id="reg-name" class="glass-input" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" class="glass-input" required placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="reg-education">Current Education (Optional)</label>
+                    <input type="text" id="reg-education" class="glass-input" placeholder="e.g. B.Tech Computer Science">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" class="glass-input" required placeholder="••••••••">
+                </div>
+                <div class="error-msg" id="reg-error"></div>
+                <button type="submit" class="btn" style="justify-content: center;">Create Account <i class="fas fa-user-plus"></i></button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const formLogin = document.getElementById('login-form');
+            const formRegister = document.getElementById('register-form');
+            
+            const loginError = document.getElementById('login-error');
+            const regError = document.getElementById('reg-error');
+
+            tabLogin.addEventListener('click', () => {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                formLogin.classList.remove('hidden');
+                formRegister.classList.add('hidden');
+                loginError.textContent = '';
+            });
+
+            tabRegister.addEventListener('click', () => {
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
+                formRegister.classList.remove('hidden');
+                formLogin.classList.add('hidden');
+                regError.textContent = '';
+            });
+
+            formLogin.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                try {
+                    const res = await fetch('/login', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({email, password})
+                    });
+                    const data = await res.json();
+                    
+                    if (res.ok) {
+                        window.location.href = '/dashboard';
+                    } else {
+                        loginError.textContent = data.message;
+                    }
+                } catch(err) {
+                    loginError.textContent = 'Server connection error.';
+                }
+            });
+
+            formRegister.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('reg-name').value;
+                const email = document.getElementById('reg-email').value;
+                const education = document.getElementById('reg-education').value;
+                const password = document.getElementById('reg-password').value;
+                
+                try {
+                    const res = await fetch('/register', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({name, email, education, password})
+                    });
+                    const data = await res.json();
+                    
+                    if (res.ok) {
+                        window.location.href = '/dashboard';
+                    } else {
+                        regError.textContent = data.message;
+                    }
+                } catch(err) {
+                    regError.textContent = 'Server connection error.';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

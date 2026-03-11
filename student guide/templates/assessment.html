@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment | AI Skill-to-Career Mentor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .assessment-container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 2rem; transition: 0.3s; }
+        .back-link:hover { color: var(--accent); }
+        
+        /* New styling for categorized skills with proficiency drop-down */
+        .skill-item-container { display: flex; align-items: center; justify-content: space-between; background: rgba(255, 255, 255, 0.05); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); flex: 1 1 calc(50% - 1rem); min-width: 250px; }
+        .skill-item-container.selected { border-color: var(--accent); background: rgba(88, 166, 255, 0.1); }
+        .skill-label-wrapper { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+        
+        .proficiency-select { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: var(--text-primary); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem; display: none; }
+        .skill-item-container.selected .proficiency-select { display: block; }
+        
+        /* Progress Bar */
+        .progress-container { width: 100%; background: rgba(255,255,255,0.1); height: 6px; border-radius: 3px; margin-bottom: 2rem; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--accent); width: 25%; transition: width 0.4s ease; }
+    </style>
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="container assessment-container glass-panel">
+        <a href="/dashboard" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        
+        <header style="margin-bottom: 2rem;">
+            <h1>Career <span class="highlight">Assessment</span></h1>
+            <p class="subtitle">Complete the steps below to generate your personalized roadmap.</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <main id="app">
+            <!-- Step 1: Role Selection -->
+            <section id="step-1" class="form-step active">
+                <h2>1. Target Job Role</h2>
+                <p>Which career path are you aiming for?</p>
+                <div class="roles-grid" id="roles-container">
+                    <div class="loading-spinner"></div>
+                </div>
+                <div class="action-bar" style="justify-content: flex-end;">
+                    <button class="btn next-btn" id="btn-next-1" disabled>Continue <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </section>
+
+            <!-- Step 2: Skills & Proficiency Input -->
+            <section id="step-2" class="form-step hidden">
+                <h2>2. Technical Skills Evaluation</h2>
+                <p>Select the technologies you know and rate your proficiency level.</p>
+                <div id="skills-container" class="skills-layout">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="action-bar">
+                    <button class="btn-secondary prev-btn" id="btn-prev-2"><i class="fas fa-arrow-left"></i> Back</button>
+                    <button class="btn next-btn" id="btn-next-2">Continue <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </section>
+
+            <!-- Step 3: Projects -->
+            <section id="step-3" class="form-step hidden">
+                <h2>3. Practical Experience</h2>
+                <p>Add your past projects. Practical implementation is highly valued by companies.</p>
+                
+                <div class="projects-wrapper">
+                    <input type="text" id="project-input" placeholder="e.g., E-commerce Website, Sentiment Analysis Bot..." class="glass-input">
+                    <button class="btn-secondary" id="add-project-btn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                
+                <ul id="projects-list" class="projects-list">
+                    <!-- Added projects appear here -->
+                </ul>
+
+                <div class="action-bar">
+                    <button class="btn-secondary prev-btn" id="btn-prev-3"><i class="fas fa-arrow-left"></i> Back</button>
+                    <button class="btn analyze-btn" id="btn-analyze">Analyze Profile <i class="fas fa-magic"></i></button>
+                </div>
+            </section>
+
+            <!-- Step 4: Results & Roadmap -->
+            <section id="step-results" class="form-step hidden">
+                <div class="results-header">
+                    <h2>AI Career readiness Analysis</h2>
+                    <h3 id="result-role" class="highlight"></h3>
+                    <p id="result-desc"></p>
+                </div>
+
+                <div class="score-container">
+                    <div class="circular-progress" id="score-circle">
+                        <div class="inner-circle">
+                            <span id="score-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="score-label">Job Readiness Score</div>
+                </div>
+
+                <!-- NEW: Mentor Feedback Section -->
+                <div style="background: rgba(88, 166, 255, 0.1); border: 1px solid var(--accent); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; color: var(--accent);">
+                        <i class="fas fa-robot"></i> AI Mentor Feedback
+                    </h4>
+                    <p id="mentor-feedback" style="margin-bottom: 0; color: #fff; line-height: 1.6;"></p>
+                </div>
+
+                <div class="analysis-grid">
+                    <div class="card glass-card skills-match">
+                        <h4><i class="fas fa-check-circle"></i> Strengths</h4>
+                        <ul id="matched-skills-list"></ul>
+                    </div>
+                    <div class="card glass-card skills-gap">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Areas to Improve</h4>
+                        <ul id="missing-skills-list"></ul>
+                    </div>
+                </div>
+
+                <div class="roadmap-section">
+                    <h3>Your Strategic Career Roadmap</h3>
+                    <div class="timeline" id="roadmap-timeline">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="action-bar centered">
+                    <a href="/dashboard" class="btn"><i class="fas fa-home"></i> Return to Dashboard</a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Keep script separated or rely on external to build dynamic UI -->
+    <script src="/static/script.js"></script>
+</body>
+</html>
