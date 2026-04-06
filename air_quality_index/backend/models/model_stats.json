@@ -1,0 +1,29 @@
+{
+  "model": "Random Forest Regressor",
+  "n_estimators": 200,
+  "train_samples": 578,
+  "test_samples": 145,
+  "mae": 8.66,
+  "rmse": 11.42,
+  "baseline_mae": 7.51,
+  "baseline_rmse": 10.08,
+  "features": [
+    "PM2.5",
+    "PM10",
+    "CO",
+    "NO2",
+    "SO2",
+    "O3",
+    "Temperature",
+    "Humidity",
+    "AQI_lag1",
+    "PM25_lag1",
+    "NO2_lag1",
+    "AQI_roll3",
+    "AQI_roll7",
+    "PM25_roll3",
+    "DayOfYear",
+    "Month",
+    "DayOfWeek"
+  ]
+}
